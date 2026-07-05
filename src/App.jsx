@@ -9,9 +9,15 @@ const press = (fn) => (e) => {
   fn();
 };
 
+const CLEAR_LABEL = ['', 'Single', 'Double', 'Triple', 'Tetris!'];
+
 export default function App() {
-  const { board, ghost, ghostColor, clearing, next, hold, score, best, lines, level, status, actions } =
-    useTetris();
+  const {
+    board, ghost, ghostColor, clearing, next, hold,
+    score, best, lines, level, combo, lastClear,
+    status, muted, toggleMute, actions,
+  } = useTetris();
+
   const showOverlay = status === 'idle' || status === 'over' || status === 'paused';
 
   return (
@@ -21,14 +27,31 @@ export default function App() {
         <div className="board-col">
           <div className="board-wrap">
             <Board board={board} ghost={ghost} ghostColor={ghostColor} clearing={clearing} />
+
+            {lastClear && status !== 'idle' && (
+              <div key={lastClear.id} className="toast">
+                <span className="toast-label">{CLEAR_LABEL[lastClear.lines]}</span>
+                <span className="toast-points">+{lastClear.points}</span>
+                {lastClear.combo > 1 && <span className="toast-combo">Combo ×{lastClear.combo}</span>}
+              </div>
+            )}
+
             {showOverlay && (
               <div className="overlay">
                 {status === 'over' && <p className="over">Game Over</p>}
                 {status === 'paused' && <p>Paused</p>}
                 {status === 'idle' && <p>Ready?</p>}
-                <button onClick={status === 'paused' ? actions.pause : actions.start}>
-                  {status === 'over' ? 'Play again' : status === 'paused' ? 'Resume' : 'Start'}
-                </button>
+
+                {status === 'paused' ? (
+                  <button onClick={actions.pause}>Resume</button>
+                ) : (
+                  <div className="difficulty">
+                    <span className="hint">{status === 'over' ? 'Play again' : 'Choose difficulty'}</span>
+                    <button onClick={() => actions.start(1)}>Easy</button>
+                    <button onClick={() => actions.start(5)}>Normal</button>
+                    <button onClick={() => actions.start(9)}>Hard</button>
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -47,7 +70,10 @@ export default function App() {
           <div className="stat"><span>Score</span><strong>{score}</strong></div>
           <div className="stat"><span>Best</span><strong>{best}</strong></div>
           <div className="stat"><span>Lines</span><strong>{lines}</strong></div>
-          <div className="stat"><span>Level</span><strong>{level}</strong></div>
+          <div className="stat">
+            <span>Level</span>
+            <strong>{level}{combo > 1 ? <em className="combo"> ×{combo}</em> : null}</strong>
+          </div>
 
           <div className="pieces">
             <div className="piece-box">
@@ -68,6 +94,9 @@ export default function App() {
             <p>C &nbsp;hold &nbsp;·&nbsp; P &nbsp;pause</p>
           </div>
 
+          <button className="mute" onClick={toggleMute}>
+            {muted ? '🔇 Sound off' : '🔊 Sound on'}
+          </button>
           {status === 'playing' && <button onClick={actions.pause}>Pause</button>}
         </aside>
       </div>

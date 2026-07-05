@@ -17,8 +17,11 @@ lives in a single `useReducer`, which keeps it predictable and easy to follow.
 - 10×20 board with all **7 tetrominoes**, each with rotation (+ simple wall kicks)
 - **Ghost piece** showing where the current piece will land
 - **Hold** a piece for later (once per drop)
+- **Difficulty levels** (Easy / Normal / Hard) — different starting speed
 - **Gravity** that speeds up as the level rises
-- **Line clears**, scoring, level, next-piece preview
+- **Line-clear animation** (flash + collapse)
+- **Combo** scoring with floating "+points" popups
+- **Sound effects** synthesized with the Web Audio API (no assets) + mute toggle
 - **High score** persisted in `localStorage`
 - On-screen **touch controls** for mobile
 - Pause, game over, and restart — fully client-side (no backend)

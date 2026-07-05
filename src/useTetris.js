@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useReducer, useState } from 'react';
 import { createInitialState, ghostFor, mergePiece, reducer } from './logic.js';
+import { setMuted, sound } from './sound.js';
 
 const MOVEMENT_KEYS = ['ArrowLeft', 'ArrowRight', 'ArrowDown', 'ArrowUp', ' '];
 const BEST_KEY = 'tetris-best';
+const MUTED_KEY = 'tetris-muted';
 
 function loadBest() {
   const raw = typeof localStorage !== 'undefined' ? localStorage.getItem(BEST_KEY) : null;
@@ -12,6 +14,26 @@ function loadBest() {
 export function useTetris() {
   const [state, dispatch] = useReducer(reducer, undefined, createInitialState);
   const [best, setBest] = useState(loadBest);
+  const [muted, setMutedState] = useState(() => {
+    try {
+      return localStorage.getItem(MUTED_KEY) === '1';
+    } catch {
+      return false;
+    }
+  });
+
+  useEffect(() => {
+    setMuted(muted);
+  }, [muted]);
+
+  // Sound cues driven by state transitions.
+  useEffect(() => {
+    if (state.status === 'clearing') sound.clear(state.clearing?.length || 1);
+  }, [state.status, state.clearing]);
+
+  useEffect(() => {
+    if (state.status === 'over') sound.gameOver();
+  }, [state.status]);
 
   // Gravity: faster as the level increases.
   const speed = Math.max(120, 800 - (state.level - 1) * 60);
@@ -45,17 +67,28 @@ export function useTetris() {
 
   const actions = useMemo(
     () => ({
-      left: () => dispatch({ type: 'MOVE', dir: -1 }),
-      right: () => dispatch({ type: 'MOVE', dir: 1 }),
-      rotate: () => dispatch({ type: 'ROTATE' }),
+      left: () => { dispatch({ type: 'MOVE', dir: -1 }); sound.move(); },
+      right: () => { dispatch({ type: 'MOVE', dir: 1 }); sound.move(); },
+      rotate: () => { dispatch({ type: 'ROTATE' }); sound.rotate(); },
       softDrop: () => dispatch({ type: 'SOFT_DROP' }),
-      hardDrop: () => dispatch({ type: 'HARD_DROP' }),
-      hold: () => dispatch({ type: 'HOLD' }),
-      start: () => dispatch({ type: 'START' }),
+      hardDrop: () => { dispatch({ type: 'HARD_DROP' }); sound.drop(); },
+      hold: () => { dispatch({ type: 'HOLD' }); sound.hold(); },
+      start: (level = 1) => dispatch({ type: 'START', level }),
       pause: () => dispatch({ type: 'PAUSE' }),
     }),
     []
   );
+
+  const toggleMute = () =>
+    setMutedState((m) => {
+      const next = !m;
+      try {
+        localStorage.setItem(MUTED_KEY, next ? '1' : '0');
+      } catch {
+        /* ignore */
+      }
+      return next;
+    });
 
   useEffect(() => {
     const onKey = (e) => {
@@ -107,7 +140,11 @@ export function useTetris() {
     best,
     lines: state.lines,
     level: state.level,
+    combo: state.combo,
+    lastClear: state.lastClear,
     status: state.status,
+    muted,
+    toggleMute,
     actions,
   };
 }

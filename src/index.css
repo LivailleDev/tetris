@@ -172,6 +172,78 @@ button:hover {
   margin: 5px 0;
 }
 
+.difficulty {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+
+.difficulty .hint {
+  color: #94a3b8;
+  font-size: 14px;
+  margin-bottom: 2px;
+}
+
+.difficulty button {
+  min-width: 130px;
+}
+
+.combo {
+  color: #39ff9e;
+  font-style: normal;
+  font-size: 14px;
+  text-shadow: 0 0 6px #39ff9e;
+}
+
+.mute {
+  background: #1e293b;
+}
+
+.mute:hover {
+  background: #334155;
+}
+
+.toast {
+  position: absolute;
+  top: 34%;
+  left: 50%;
+  text-align: center;
+  pointer-events: none;
+  z-index: 2;
+  animation: toast-rise 950ms ease-out forwards;
+}
+
+.toast-label {
+  display: block;
+  font-size: 24px;
+  font-weight: 800;
+  color: #ffffff;
+  text-shadow: 0 0 10px #a5b4fc, 0 0 4px #a5b4fc;
+}
+
+.toast-points {
+  display: block;
+  font-size: 18px;
+  font-weight: 700;
+  color: #ffe14d;
+  text-shadow: 0 0 8px rgba(255, 225, 77, 0.6);
+}
+
+.toast-combo {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+  color: #39ff9e;
+  text-shadow: 0 0 8px rgba(57, 255, 158, 0.6);
+}
+
+@keyframes toast-rise {
+  0% { opacity: 0; transform: translate(-50%, 12px) scale(0.9); }
+  15% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -46px) scale(1); }
+}
+
 .board-col {
   display: flex;
   flex-direction: column;

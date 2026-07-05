@@ -85,6 +85,9 @@ export function createInitialState() {
     hold: null,
     canHold: true,
     clearing: null,
+    combo: 0,
+    lastClear: null,
+    startLevel: 1,
     score: 0,
     lines: 0,
     level: 1,
@@ -92,7 +95,7 @@ export function createInitialState() {
   };
 }
 
-function startGame() {
+function startGame(startLevel = 1) {
   return {
     board: emptyBoard(),
     piece: spawn(randomPiece()),
@@ -100,9 +103,12 @@ function startGame() {
     hold: null,
     canHold: true,
     clearing: null,
+    combo: 0,
+    lastClear: null,
+    startLevel,
     score: 0,
     lines: 0,
-    level: 1,
+    level: startLevel,
     status: 'playing',
   };
 }
@@ -118,7 +124,8 @@ function lockPiece(state) {
   const piece = spawn(state.next);
   const next = randomPiece();
   const status = collides(merged, piece.shape, piece.x, piece.y) ? 'over' : 'playing';
-  return { ...state, board: merged, piece, next, status, canHold: true };
+  // A lock that clears nothing breaks the combo chain.
+  return { ...state, board: merged, piece, next, status, canHold: true, combo: 0 };
 }
 
 function finishClear(state) {
@@ -126,13 +133,33 @@ function finishClear(state) {
   const cleared = rows.size;
   const kept = state.board.filter((_, y) => !rows.has(y));
   while (kept.length < ROWS) kept.unshift(Array(COLS).fill(null));
+
   const lines = state.lines + cleared;
-  const level = Math.floor(lines / 10) + 1;
-  const score = state.score + LINE_SCORES[cleared] * state.level;
+  const level = state.startLevel + Math.floor(lines / 10);
+  const combo = state.combo + 1;
+  const base = LINE_SCORES[cleared] * state.level;
+  const comboBonus = (combo - 1) * 50 * state.level;
+  const points = base + comboBonus;
+  const score = state.score + points;
+  const lastClear = { id: (state.lastClear?.id || 0) + 1, lines: cleared, points, combo };
+
   const piece = spawn(state.next);
   const next = randomPiece();
   const status = collides(kept, piece.shape, piece.x, piece.y) ? 'over' : 'playing';
-  return { ...state, board: kept, piece, next, score, lines, level, clearing: null, status, canHold: true };
+  return {
+    ...state,
+    board: kept,
+    piece,
+    next,
+    score,
+    lines,
+    level,
+    combo,
+    lastClear,
+    clearing: null,
+    status,
+    canHold: true,
+  };
 }
 
 // One downward step (gravity or soft drop). Locks the piece if it can't fall.
@@ -183,7 +210,7 @@ export function reducer(state, action) {
   switch (action.type) {
     case 'START':
     case 'RESET':
-      return startGame();
+      return startGame(action.level || 1);
     case 'TICK':
       return state.status === 'playing' ? step(state) : state;
     case 'SOFT_DROP':
