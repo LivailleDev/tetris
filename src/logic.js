@@ -57,15 +57,12 @@ export function ghostFor(board, piece) {
   return cells;
 }
 
-function clearLines(board) {
-  let cleared = 0;
-  const kept = board.filter((row) => {
-    const full = row.every(Boolean);
-    if (full) cleared++;
-    return !full;
+function fullRows(board) {
+  const rows = [];
+  board.forEach((row, y) => {
+    if (row.every(Boolean)) rows.push(y);
   });
-  while (kept.length < ROWS) kept.unshift(Array(COLS).fill(null));
-  return { board: kept, cleared };
+  return rows;
 }
 
 function spawn(piece) {
@@ -87,6 +84,7 @@ export function createInitialState() {
     next: randomPiece(),
     hold: null,
     canHold: true,
+    clearing: null,
     score: 0,
     lines: 0,
     level: 1,
@@ -101,6 +99,7 @@ function startGame() {
     next: randomPiece(),
     hold: null,
     canHold: true,
+    clearing: null,
     score: 0,
     lines: 0,
     level: 1,
@@ -110,14 +109,30 @@ function startGame() {
 
 function lockPiece(state) {
   const merged = mergePiece(state.board, state.piece);
-  const { board, cleared } = clearLines(merged);
+  const rows = fullRows(merged);
+  if (rows.length > 0) {
+    // Keep the full rows visible and pause while the clear animation plays;
+    // finishClear() actually removes them and spawns the next piece.
+    return { ...state, board: merged, piece: null, clearing: rows, status: 'clearing' };
+  }
+  const piece = spawn(state.next);
+  const next = randomPiece();
+  const status = collides(merged, piece.shape, piece.x, piece.y) ? 'over' : 'playing';
+  return { ...state, board: merged, piece, next, status, canHold: true };
+}
+
+function finishClear(state) {
+  const rows = new Set(state.clearing);
+  const cleared = rows.size;
+  const kept = state.board.filter((_, y) => !rows.has(y));
+  while (kept.length < ROWS) kept.unshift(Array(COLS).fill(null));
   const lines = state.lines + cleared;
   const level = Math.floor(lines / 10) + 1;
   const score = state.score + LINE_SCORES[cleared] * state.level;
   const piece = spawn(state.next);
   const next = randomPiece();
-  const status = collides(board, piece.shape, piece.x, piece.y) ? 'over' : 'playing';
-  return { ...state, board, piece, next, score, lines, level, status, canHold: true };
+  const status = collides(kept, piece.shape, piece.x, piece.y) ? 'over' : 'playing';
+  return { ...state, board: kept, piece, next, score, lines, level, clearing: null, status, canHold: true };
 }
 
 // One downward step (gravity or soft drop). Locks the piece if it can't fall.
@@ -179,6 +194,8 @@ export function reducer(state, action) {
       return state.status === 'playing' ? rotate(state) : state;
     case 'HARD_DROP':
       return state.status === 'playing' ? hardDrop(state) : state;
+    case 'FINISH_CLEAR':
+      return state.status === 'clearing' ? finishClear(state) : state;
     case 'HOLD':
       return state.status === 'playing' ? hold(state) : state;
     case 'PAUSE':

@@ -1,11 +1,12 @@
 import { COLS } from '../logic.js';
 
-export default function Board({ board, ghost, ghostColor }) {
+export default function Board({ board, ghost, ghostColor, clearing }) {
   return (
     <div className="board" style={{ gridTemplateColumns: `repeat(${COLS}, 1fr)` }}>
       {board.map((row, y) =>
         row.map((cell, x) => {
           const isGhost = !cell && ghost?.has(`${y}-${x}`);
+          const isClearing = cell && clearing?.has(y);
           let style;
           if (cell) {
             // Crisp block: solid fill, sharp bright inner edge and a dark bevel,
@@ -20,7 +21,7 @@ export default function Board({ board, ghost, ghostColor }) {
           return (
             <div
               key={`${y}-${x}`}
-              className={`cell ${cell ? 'filled' : ''} ${isGhost ? 'ghost' : ''}`}
+              className={`cell ${cell ? 'filled' : ''} ${isGhost ? 'ghost' : ''} ${isClearing ? 'clearing' : ''}`}
               style={style}
             />
           );

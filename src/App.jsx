@@ -10,7 +10,7 @@ const press = (fn) => (e) => {
 };
 
 export default function App() {
-  const { board, ghost, ghostColor, next, hold, score, best, lines, level, status, actions } =
+  const { board, ghost, ghostColor, clearing, next, hold, score, best, lines, level, status, actions } =
     useTetris();
   const showOverlay = status === 'idle' || status === 'over' || status === 'paused';
 
@@ -20,7 +20,7 @@ export default function App() {
       <div className="game">
         <div className="board-col">
           <div className="board-wrap">
-            <Board board={board} ghost={ghost} ghostColor={ghostColor} />
+            <Board board={board} ghost={ghost} ghostColor={ghostColor} clearing={clearing} />
             {showOverlay && (
               <div className="overlay">
                 {status === 'over' && <p className="over">Game Over</p>}

@@ -52,6 +52,26 @@ body {
   border-radius: 3px;
 }
 
+/* Line-clear: flash bright, then collapse. Kept just under the 340ms removal delay. */
+.cell.clearing {
+  animation: line-clear 300ms ease-out forwards;
+  z-index: 1;
+}
+
+@keyframes line-clear {
+  0% {
+    filter: brightness(1.4);
+  }
+  40% {
+    filter: brightness(3.2) saturate(1.4);
+  }
+  100% {
+    filter: brightness(3.2);
+    opacity: 0;
+    transform: scale(0.15);
+  }
+}
+
 .overlay {
   position: absolute;
   inset: 0;

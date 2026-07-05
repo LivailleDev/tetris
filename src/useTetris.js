@@ -22,6 +22,13 @@ export function useTetris() {
     return () => clearInterval(id);
   }, [state.status, speed]);
 
+  // Let the line-clear animation play, then remove the rows.
+  useEffect(() => {
+    if (state.status !== 'clearing') return undefined;
+    const id = setTimeout(() => dispatch({ type: 'FINISH_CLEAR' }), 340);
+    return () => clearTimeout(id);
+  }, [state.status, state.clearing]);
+
   // Persist a new personal best when a game ends.
   useEffect(() => {
     if (state.status !== 'over') return;
@@ -87,11 +94,13 @@ export function useTetris() {
     const cells = state.piece ? ghostFor(state.board, state.piece) : [];
     return new Set(cells.map(([x, y]) => `${y}-${x}`));
   }, [state.board, state.piece]);
+  const clearing = useMemo(() => new Set(state.clearing || []), [state.clearing]);
 
   return {
     board,
     ghost,
     ghostColor: state.piece?.color,
+    clearing,
     next: state.next,
     hold: state.hold,
     score: state.score,
