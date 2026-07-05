@@ -1,0 +1,154 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, sans-serif;
+  background: #0f172a;
+  color: #e2e8f0;
+}
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px;
+}
+
+.app h1 {
+  font-weight: 800;
+  letter-spacing: 6px;
+  margin: 0 0 18px;
+  color: #a5b4fc;
+}
+
+.game {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.board-wrap {
+  position: relative;
+}
+
+.board {
+  display: grid;
+  gap: 1px;
+  background: #1e293b;
+  padding: 2px;
+  border-radius: 6px;
+}
+
+.cell {
+  width: 26px;
+  height: 26px;
+  background: #0b1220;
+  border-radius: 3px;
+}
+
+.cell.filled {
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.18);
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: center;
+  justify-content: center;
+  background: rgba(15, 23, 42, 0.82);
+  border-radius: 6px;
+}
+
+.overlay p {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.overlay .over {
+  color: #f87171;
+}
+
+button {
+  background: #6366f1;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+button:hover {
+  background: #4f46e5;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 160px;
+}
+
+.stat {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  background: #1e293b;
+  padding: 10px 14px;
+  border-radius: 8px;
+}
+
+.stat span {
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+.stat strong {
+  font-size: 18px;
+}
+
+.next {
+  background: #1e293b;
+  padding: 12px 14px;
+  border-radius: 8px;
+}
+
+.next > span {
+  color: #94a3b8;
+  font-size: 14px;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.next-grid {
+  display: grid;
+  gap: 2px;
+  justify-content: start;
+}
+
+.next-cell {
+  width: 18px;
+  height: 18px;
+  background: transparent;
+  border-radius: 2px;
+}
+
+.controls {
+  background: #1e293b;
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #94a3b8;
+}
+
+.controls p {
+  margin: 5px 0;
+}
