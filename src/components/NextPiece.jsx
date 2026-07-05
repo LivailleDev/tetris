@@ -12,7 +12,10 @@ export default function NextPiece({ piece }) {
             className="next-cell"
             style={
               cell
-                ? { backgroundColor: piece.color, boxShadow: `0 0 6px ${piece.color}` }
+                ? {
+                    backgroundColor: piece.color,
+                    boxShadow: `inset 0 0 0 1px rgba(255, 255, 255, 0.55), inset -2px -2px 0 rgba(0, 0, 0, 0.28)`,
+                  }
                 : undefined
             }
           />

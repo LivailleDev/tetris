@@ -8,12 +8,14 @@ export default function Board({ board, ghost, ghostColor }) {
           const isGhost = !cell && ghost?.has(`${y}-${x}`);
           let style;
           if (cell) {
+            // Crisp block: solid fill, sharp bright inner edge and a dark bevel,
+            // plus a subtle outer neon halo (no blurry inner glow).
             style = {
               backgroundColor: cell,
-              boxShadow: `0 0 8px ${cell}, 0 0 2px ${cell}, inset 0 0 5px rgba(255, 255, 255, 0.45)`,
+              boxShadow: `inset 0 0 0 1.5px rgba(255, 255, 255, 0.6), inset -3px -3px 0 rgba(0, 0, 0, 0.28), 0 0 5px ${cell}`,
             };
           } else if (isGhost) {
-            style = { boxShadow: `inset 0 0 0 2px ${ghostColor}, 0 0 6px ${ghostColor}`, opacity: 0.5 };
+            style = { boxShadow: `inset 0 0 0 2px ${ghostColor}`, opacity: 0.5 };
           }
           return (
             <div
