@@ -10,7 +10,11 @@ export default function NextPiece({ piece }) {
           <div
             key={`${y}-${x}`}
             className="next-cell"
-            style={cell ? { backgroundColor: piece.color } : undefined}
+            style={
+              cell
+                ? { backgroundColor: piece.color, boxShadow: `0 0 6px ${piece.color}` }
+                : undefined
+            }
           />
         ))
       )}

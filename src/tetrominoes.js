@@ -1,13 +1,14 @@
 // The seven tetrominoes. Shapes are square matrices so they can be rotated
 // with a single generic transform.
+// Neon / arcade palette — bright, saturated colors that glow against a dark board.
 export const TETROMINOES = {
-  I: { color: '#22d3ee', shape: [[0, 0, 0, 0], [1, 1, 1, 1], [0, 0, 0, 0], [0, 0, 0, 0]] },
-  O: { color: '#facc15', shape: [[1, 1], [1, 1]] },
-  T: { color: '#a855f7', shape: [[0, 1, 0], [1, 1, 1], [0, 0, 0]] },
-  S: { color: '#22c55e', shape: [[0, 1, 1], [1, 1, 0], [0, 0, 0]] },
-  Z: { color: '#ef4444', shape: [[1, 1, 0], [0, 1, 1], [0, 0, 0]] },
-  J: { color: '#3b82f6', shape: [[1, 0, 0], [1, 1, 1], [0, 0, 0]] },
-  L: { color: '#f97316', shape: [[0, 0, 1], [1, 1, 1], [0, 0, 0]] },
+  I: { color: '#22e3ff', shape: [[0, 0, 0, 0], [1, 1, 1, 1], [0, 0, 0, 0], [0, 0, 0, 0]] },
+  O: { color: '#ffe14d', shape: [[1, 1], [1, 1]] },
+  T: { color: '#c86bff', shape: [[0, 1, 0], [1, 1, 1], [0, 0, 0]] },
+  S: { color: '#39ff9e', shape: [[0, 1, 1], [1, 1, 0], [0, 0, 0]] },
+  Z: { color: '#ff4d6d', shape: [[1, 1, 0], [0, 1, 1], [0, 0, 0]] },
+  J: { color: '#4d7cff', shape: [[1, 0, 0], [1, 1, 1], [0, 0, 0]] },
+  L: { color: '#ff9a3c', shape: [[0, 0, 1], [1, 1, 1], [0, 0, 0]] },
 };
 
 const KEYS = Object.keys(TETROMINOES);
