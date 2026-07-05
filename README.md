@@ -1,8 +1,14 @@
 # React Tetris
 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-play%20now-brightgreen)](https://playful-paletas-67a55e.netlify.app)
+![React](https://img.shields.io/badge/React-18-61DAFB)
+![Vite](https://img.shields.io/badge/Vite-5-646CFF)
+
 A classic Tetris built with **React 18** and **vanilla JavaScript** — no game engine or
 external game libraries. All the game logic (collision, rotation, line clears, scoring)
 lives in a single `useReducer`, which keeps it predictable and easy to follow.
+
+**🎮 Play it live:** https://playful-paletas-67a55e.netlify.app
 
 ![React Tetris](docs/screenshot.png)
 
