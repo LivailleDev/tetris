@@ -152,3 +152,45 @@ button:hover {
 .controls p {
   margin: 5px 0;
 }
+
+.board-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.touch {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.touch button {
+  padding: 14px 0;
+  font-size: 18px;
+  background: #1e293b;
+}
+
+.touch button:hover {
+  background: #334155;
+}
+
+.pieces {
+  display: flex;
+  gap: 10px;
+}
+
+.piece-box {
+  flex: 1;
+  min-height: 78px;
+  background: #1e293b;
+  padding: 12px 14px;
+  border-radius: 8px;
+}
+
+.piece-box > span {
+  color: #94a3b8;
+  font-size: 14px;
+  display: block;
+  margin-bottom: 8px;
+}

@@ -15,10 +15,13 @@ lives in a single `useReducer`, which keeps it predictable and easy to follow.
 ## Features
 
 - 10×20 board with all **7 tetrominoes**, each with rotation (+ simple wall kicks)
+- **Ghost piece** showing where the current piece will land
+- **Hold** a piece for later (once per drop)
 - **Gravity** that speeds up as the level rises
-- **Line clears**, scoring, level, and a **next-piece** preview
-- Pause, game over, and restart
-- Keyboard controls, fully client-side (no backend)
+- **Line clears**, scoring, level, next-piece preview
+- **High score** persisted in `localStorage`
+- On-screen **touch controls** for mobile
+- Pause, game over, and restart — fully client-side (no backend)
 
 ## Controls
 
@@ -28,8 +31,11 @@ lives in a single `useReducer`, which keeps it predictable and easy to follow.
 | ↑ / X | Rotate |
 | ↓ | Soft drop |
 | Space | Hard drop |
+| C / Shift | Hold |
 | P | Pause |
 | Enter | Start / restart |
+
+On touch devices, use the on-screen buttons below the board.
 
 ## Run locally
 

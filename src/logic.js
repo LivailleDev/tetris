@@ -1,4 +1,4 @@
-import { randomPiece } from './tetrominoes.js';
+import { randomPiece, pieceFromType, TETROMINOES } from './tetrominoes.js';
 
 export const COLS = 10;
 export const ROWS = 20;
@@ -43,6 +43,20 @@ export function mergePiece(board, piece) {
   return next;
 }
 
+// Cells (as [x, y]) where the current piece would land if hard-dropped.
+export function ghostFor(board, piece) {
+  if (!piece) return [];
+  let y = piece.y;
+  while (!collides(board, piece.shape, piece.x, y + 1)) y++;
+  const cells = [];
+  for (let r = 0; r < piece.shape.length; r++) {
+    for (let c = 0; c < piece.shape[r].length; c++) {
+      if (piece.shape[r][c]) cells.push([piece.x + c, y + r]);
+    }
+  }
+  return cells;
+}
+
 function clearLines(board) {
   let cleared = 0;
   const kept = board.filter((row) => {
@@ -56,6 +70,7 @@ function clearLines(board) {
 
 function spawn(piece) {
   return {
+    type: piece.type,
     shape: piece.shape,
     color: piece.color,
     x: Math.floor((COLS - piece.shape[0].length) / 2),
@@ -70,6 +85,8 @@ export function createInitialState() {
     board: emptyBoard(),
     piece: null,
     next: randomPiece(),
+    hold: null,
+    canHold: true,
     score: 0,
     lines: 0,
     level: 1,
@@ -82,6 +99,8 @@ function startGame() {
     board: emptyBoard(),
     piece: spawn(randomPiece()),
     next: randomPiece(),
+    hold: null,
+    canHold: true,
     score: 0,
     lines: 0,
     level: 1,
@@ -98,7 +117,7 @@ function lockPiece(state) {
   const piece = spawn(state.next);
   const next = randomPiece();
   const status = collides(board, piece.shape, piece.x, piece.y) ? 'over' : 'playing';
-  return { ...state, board, piece, next, score, lines, level, status };
+  return { ...state, board, piece, next, score, lines, level, status, canHold: true };
 }
 
 // One downward step (gravity or soft drop). Locks the piece if it can't fall.
@@ -134,6 +153,17 @@ function hardDrop(state) {
   return lockPiece({ ...state, piece: { ...piece, y }, score: state.score + (y - piece.y) * 2 });
 }
 
+// Store or swap the held piece (once per drop).
+function hold(state) {
+  if (!state.canHold) return state;
+  const stored = { type: state.piece.type, color: state.piece.color, shape: pieceFromType(state.piece.type).shape };
+  const incoming = state.hold ? pieceFromType(state.hold.type) : state.next;
+  const piece = spawn(incoming);
+  const next = state.hold ? state.next : randomPiece();
+  const status = collides(state.board, piece.shape, piece.x, piece.y) ? 'over' : 'playing';
+  return { ...state, piece, next, hold: stored, canHold: false, status };
+}
+
 export function reducer(state, action) {
   switch (action.type) {
     case 'START':
@@ -149,6 +179,8 @@ export function reducer(state, action) {
       return state.status === 'playing' ? rotate(state) : state;
     case 'HARD_DROP':
       return state.status === 'playing' ? hardDrop(state) : state;
+    case 'HOLD':
+      return state.status === 'playing' ? hold(state) : state;
     case 'PAUSE':
       if (state.status === 'playing') return { ...state, status: 'paused' };
       if (state.status === 'paused') return { ...state, status: 'playing' };

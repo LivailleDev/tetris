@@ -12,9 +12,12 @@ export const TETROMINOES = {
 
 const KEYS = Object.keys(TETROMINOES);
 
+// Fresh, unrotated piece of a given type (deep-copied so rotations never mutate the template).
+export function pieceFromType(type) {
+  const { shape, color } = TETROMINOES[type];
+  return { type, shape: shape.map((row) => row.slice()), color };
+}
+
 export function randomPiece() {
-  const key = KEYS[Math.floor(Math.random() * KEYS.length)];
-  const { shape, color } = TETROMINOES[key];
-  // Return a deep copy so rotations never mutate the template.
-  return { shape: shape.map((row) => row.slice()), color };
+  return pieceFromType(KEYS[Math.floor(Math.random() * KEYS.length)]);
 }
